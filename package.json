@@ -1,0 +1,12 @@
+{
+    "name": "osm2json-streamer",
+    "description": "Streams OSM data via API bbox call into a GeoJSON file.",
+    "author": "Ryan Clark",
+    "version": "0.0.1",
+    "dependencies": {
+        "request": "2.22.x",
+        "node-expat": "2.0.x"
+    },
+    "engine": "node >= 0.8.20"
+}
+        
