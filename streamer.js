@@ -1,6 +1,6 @@
 // Configurable parts
 var bbox = "-111.01032257080078,32.314701127170984,-110.68004608154295,32.447492524518246",
-    outFilePath = "content.geojson";
+    outFilePath = "example-output.geojson";
 
 
 // The rest...
