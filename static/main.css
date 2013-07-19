@@ -1,9 +1,0 @@
-html, body, #map {
-    height: 100%; width: 100%;
-    padding: 0px;
-    margin: 0px;
-}
-
-.leaflet-popup-content-wrapper, .leaflet-popup-content-wrapper * {
-    border-radius: 0px !important;
-}

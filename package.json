@@ -1,12 +1,20 @@
 {
-    "name": "osm2json-streamer",
-    "description": "Streams OSM data via API bbox call into a GeoJSON file.",
+    "name": "osm2geojson",
+    "description": "Streams OSM data via API bbox call into GeoJSON.",
     "author": "Ryan Clark",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "dependencies": {
         "request": "2.22.x",
         "node-expat": "2.0.x"
     },
-    "engine": "node >= 0.8.20"
+    "engine": "node >= 0.8.20",
+    "bin": {
+        "osm2geojson": "index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/rclark/osm2geojson.git"
+    },
+    "main": "index.js",
+    "license": "MIT"
 }
-        
