@@ -1,7 +1,16 @@
 {
     "name": "osm2geojson",
     "description": "Streams OSM data via API bbox call into GeoJSON.",
+    "keywords": [
+        "geojson",
+        "openstreetmap"
+    ],
     "author": "Ryan Clark",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/rclark/osm2geojson.git"
+    },
+    "main": "osm2geojson.js",
     "version": "0.1.0",
     "dependencies": {
         "request": "2.22.x",
@@ -9,12 +18,7 @@
     },
     "engine": "node >= 0.8.20",
     "bin": {
-        "osm2geojson": "index.js"
+        "osm2geojson": "./bin/osm2geojson.js"
     },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/rclark/osm2geojson.git"
-    },
-    "main": "index.js",
     "license": "MIT"
 }

@@ -1,4 +1,6 @@
-var osm2geojson = require("./osm2geojson"),
+#!/usr/bin/env node
+
+var osm2geojson = require("../osm2geojson"),
     
     scriptIndex = process.argv.indexOf("osm2geojson"),
     left = process.argv[scriptIndex + 1],

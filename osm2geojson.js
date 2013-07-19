@@ -5,11 +5,7 @@ function osm2geojson(bbox, outputStream, callback) {
     /*
         bbox: and array of bbox coordinates like [left, bottom, right, top]
         outputStream: a writeable stream
-        callback: function to call when everything is done. Recieves (error, stream) where error is null if there wasn't one.
-        
-        For example:
-        require("./osm2geojson")([-111,32,-110,33], fs.createWriteStream("file.geojson"), function (err, stream) { ... });
-        
+        callback: function to call when everything is done. Recieves (error, stream) where error is null if there wasn't one.    
     */
     
     // Bail if the area is too big
