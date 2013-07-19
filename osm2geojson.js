@@ -2,12 +2,6 @@ var expat = require("node-expat"),
     request = require("request");
 
 function osm2geojson(bbox, outputStream, callback) {
-    /*
-        bbox: and array of bbox coordinates like [left, bottom, right, top]
-        outputStream: a writeable stream
-        callback: function to call when everything is done. Recieves (error, stream) where error is null if there wasn't one.    
-    */
-    
     // Bail if the area is too big
     if ((bbox[2] - bbox[0]) * (bbox[3] - bbox[1]) > 0.25) {
         callback({
@@ -84,8 +78,10 @@ function osm2geojson(bbox, outputStream, callback) {
     
     // When we're all finished with the incoming data
     parser.on("end", function () {
+        if (!currentFeature) { callback("I didn't get any features from OSM\n"); return; }
+        
         // Finish up the FeatureCollection
-        outputStream.write("]}");
+        outputStream.write("]}\n");
         
         // Callback
         callback();

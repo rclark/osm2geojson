@@ -1,13 +1,11 @@
 #!/usr/bin/env node
 
 var osm2geojson = require("../osm2geojson"),
-    
-    scriptIndex = process.argv.indexOf("osm2geojson"),
-    left = process.argv[scriptIndex + 1],
-    bottom = process.argv[scriptIndex + 2],
-    right = process.argv[scriptIndex + 3],
-    top = process.argv[scriptIndex + 4];
+    argv = require("optimist")
+        .options("b", { alias: "bbox" })
+        .string("b")
+        .argv;
 
-osm2geojson([left, bottom, right, top], process.stdout, function (err) {
-    process.stderr.write(err);    
+osm2geojson(JSON.parse(argv.bbox), process.stdout, function (err) {
+    if (err) { process.stderr.write(err.message + "\n" || "argh\n"); }
 });
