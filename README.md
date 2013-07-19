@@ -22,6 +22,7 @@ or pipe it to a file or something...
     osm2geojson(bbox, outputStream, callback);
     
 ... where:
+
 - __bbox__: an array representing a bounding box as [ left, bottom, right, top ]. Units of degrees. The total area cannot exceed 0.25 sq. degrees.
 - __outputStream__: an object that is a [writeable stream](http://nodejs.org/api/stream.html#stream_class_stream_writable)
 - __callback__: a function to execute when everything is finished. You'll get an error if one occurred, and nothing if it worked.
