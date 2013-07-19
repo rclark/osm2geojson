@@ -1,4 +1,4 @@
-osm2json-stream
+osm2geojson
 ===============
 
 Streams OSM data via API bbox call into GeoJSON. Generates GeoJSON features from OSM ways.
