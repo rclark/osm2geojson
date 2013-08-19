@@ -1,21 +1,9 @@
 var expat = require("node-expat"),
     request = require("request");
 
-function osm2geojson(bbox, outputStream, callback) {
-    // Bail if the area is too big
-    if ((bbox[2] - bbox[0]) * (bbox[3] - bbox[1]) > 0.25) {
-        callback({
-            error: "request_area_too_big",
-            statusCode: 400,
-            message: "The requested area is too large"
-        });
-        return;
-    }
-    
+function osmStream2Stream(readable, writeable, callback) {
     // Setup an xml stream parser
     var parser = new expat.Parser("UTF-8"),
-        // Build the API request to OSM
-        url = "http://api.openstreetmap.org/api/0.6/map?bbox=" + bbox.join(","),
         // Setup some cruft
         firstFeature = true,
         currentFeature = null,
@@ -27,7 +15,7 @@ function osm2geojson(bbox, outputStream, callback) {
         switch (name) {
         case "node":
             // Cache the node for later lookup
-            nodes[attrs.id] = { uid: attrs.uid, coordinates: [attrs.lon, attrs.lat] };
+            nodes[attrs.id] = { uid: attrs.uid, coordinates: [Number(attrs.lon), Number(attrs.lat)] };
             break;
         case "way":
             // Begin assembling a new feature
@@ -67,12 +55,12 @@ function osm2geojson(bbox, outputStream, callback) {
             // Deal with commas between features -- don't prepend one if this is the first feature
             if (firstFeature) {
                 // Start writing a FeatureCollection
-                outputStream.write('{"type":"FeatureCollection","features":[');
+                writeable.write('{"type":"FeatureCollection","features":[');
                 firstFeature = false;
-            } else { outputStream.write(","); }
+            } else { writeable.write(","); }
             
             // Write the feature to the stream
-            outputStream.write(JSON.stringify(currentFeature));
+            writeable.write(JSON.stringify(currentFeature));
         }
     });
     
@@ -81,7 +69,7 @@ function osm2geojson(bbox, outputStream, callback) {
         if (!currentFeature) { callback("I didn't get any features from OSM\n"); return; }
         
         // Finish up the FeatureCollection
-        outputStream.write("]}\n");
+        writeable.write("]}\n");
         
         // Callback
         callback();
@@ -93,8 +81,25 @@ function osm2geojson(bbox, outputStream, callback) {
         callback(err);
     });
     
+    readable.pipe(parser);
+}
+
+function osm2geojson(bbox, outputStream, callback) {
+    // Bail if the area is too big
+    if ((bbox[2] - bbox[0]) * (bbox[3] - bbox[1]) > 0.25) {
+        callback({
+            error: "request_area_too_big",
+            statusCode: 400,
+            message: "The requested area is too large"
+        });
+        return;
+    }
+    
+    // Build the API request to OSM
+    var url = "http://api.openstreetmap.org/api/0.6/map?bbox=" + bbox.join(",");
+    
     // Okay, actually make the request and pipe the response into the parser
-    request(url).pipe(parser);
+    osmStream2Stream(request(url), outputStream, callback);
 }
 
 // Export the function for use elsewhere
