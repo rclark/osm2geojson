@@ -11,7 +11,7 @@
         "url": "https://github.com/rclark/osm2geojson.git"
     },
     "main": "osm2geojson.js",
-    "version": "0.1.1",
+    "version": "0.2.1",
     "dependencies": {
         "request": "2.22.x",
         "node-expat": "2.0.x",
