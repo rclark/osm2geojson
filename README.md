@@ -30,6 +30,9 @@ npm install osm2geojson
 osm2geojson = require("osm2geojson")();
 aReadableStream.pipe(osm2geojson).pipe(aWritableStream);
 ```
+
+### Optional filtering and mapping
+
 The function returned by `require('osm2geojson')` can take two optional arguments -- a filter function and a mapping function.
 
 A "filter function" should return `true` for the features you care about, and `false` for those you don't. Those that return `false` will not be included in the final GeoJSON FeatureCollection.
