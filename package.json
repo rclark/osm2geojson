@@ -23,5 +23,11 @@
   "bin": {
     "osm2geojson": "./bin/osm2geojson.js"
   },
-  "license": "MIT"
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha tests/"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "~1.16.2"
+  }
 }

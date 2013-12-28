@@ -15,8 +15,7 @@ function Osm2GeoJSON(filterFunction, mappingFunction) {
       writer = geojsonStream.stringify()
         .on('data', function (chunk) {
           transformer.push(chunk);
-        })
-        .on('end', transformer.end),
+        }),
 
       // Setup some cruft
       currentFeature = null,
@@ -54,7 +53,6 @@ function Osm2GeoJSON(filterFunction, mappingFunction) {
       // Lookup the node, assign its coords to the currentFeature
       var node = nodes[attrs.ref];
       if (node) currentFeature.geometry.coordinates.push(node.coordinates);
-      else transformer.emit('error', 'Could not find node: ' + attrs.ref + ', referenced by way: ' + currentFeature.id +'\n');
       break;
     case 'tag':
       // Assign properties to the currentFeature, if it exists.
@@ -95,10 +93,10 @@ function Osm2GeoJSON(filterFunction, mappingFunction) {
     if (currentFeature && currentFeature.geometry.type !== '') {
       if (filterFunction(currentFeature)) writer.write(mappingFunction(currentFeature));
     }
+
+    // Finished writing when we've parsed the end of the <osm> element
+    if (name === 'osm') { writer.end(); }
   });
-  
-  // When we're all finished with the incoming data
-  parser.on('end', writer.end);
 
   return transformer;
 }
