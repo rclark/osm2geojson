@@ -1,7 +1,7 @@
 osm2geojson
 ===========
 
-Streams OSM data in XML format to GeoJSON. Generates GeoJSON features from OSM ways and nodes.
+Streams OSM data in XML format to GeoJSON. Generates GeoJSON features from OSM ways and nodes. 
 
 ### Install it globally
 ```shell
