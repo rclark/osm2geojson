@@ -2,14 +2,17 @@ var expat = require('node-expat'),
     stream = require('stream')
     geojsonStream = require('geojson-stream');
 
-function Osm2GeoJSON(filterFunction) {
+function Osm2GeoJSON(filterFunction, mappingFunction) {
   // If a filterFunction was not given make one that always returns true
-  filterFunction = filterFunction || function () { return true; };
+  if (typeof filterFunction !== 'function') filterFunction = function () { return true; };
+
+  // If a mappingFunction was not given make one that will just return the feature
+  if (typeof mappingFunction !== 'function') mappingFunction = function (f) { return f; };
 
   // Setup an xml stream parser and a GeoJSON stream writer
   var parser = this.input = new expat.Parser('UTF-8'),
       writer = this.output = geojsonStream.stringify(),
-      error = this.error = new stream.Transform(),
+      error = this.error = new stream.PassThrough(),
 
       // Setup some cruft
       currentFeature = null,
@@ -40,7 +43,9 @@ function Osm2GeoJSON(filterFunction) {
       break;
     case 'nd':
       // Lookup the node, assign its coords to the currentFeature
-      currentFeature.geometry.coordinates.push(nodes[attrs.ref].coordinates);
+      var node = nodes[attrs.ref];
+      if (node) currentFeature.geometry.coordinates.push(node.coordinates);
+      else parser.emit('error', 'Could not find node: ' + attrs.ref + ', referenced by way: ' + currentFeature.id = '\n');
       break;
     case 'tag':
       // Assign properties to the currentFeature, if it exists.
@@ -69,6 +74,7 @@ function Osm2GeoJSON(filterFunction) {
     // ...deal with nodes
     if (name === 'node') {
       // If any properties have been assigned...
+      //  ... this is a shitty test for whether or not its worth keeping a node around ...
       if (Object.keys(currentFeature.properties).length > 1) {
         // ... then this is a Point
         currentFeature.geometry.type = 'Point';
@@ -76,8 +82,9 @@ function Osm2GeoJSON(filterFunction) {
     }
 
     // If we've completed a feature, write it to the output stream if it passes the filter
+    //  ... also run the feature through whatever mapping function we've got
     if (currentFeature && currentFeature.geometry.type !== '') {
-      if (filterFunction(currentFeature)) writer.write(currentFeature);
+      if (filterFunction(currentFeature)) writer.write(mappingFunction(currentFeature));
     }
   });
   
@@ -85,9 +92,7 @@ function Osm2GeoJSON(filterFunction) {
   parser.on('end', writer.end);
   
   // When an error is encountered
-  parser.on('error', function (err) {
-    error.write(err);
-  });
+  parser.on('error', function (err) { error.write(err.toString()); });
 }
 
 module.exports = function (filterFunction) {
