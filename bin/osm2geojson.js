@@ -17,9 +17,16 @@ var osm2geojson = require('../')(),
         describe: 'the path to a file containing an OSM dump as XML'
       })
 
+      .options('e', {
+        alias: 'errorLog',
+        default: 'osm2geojson.err',
+        describe: 'the path to a file that will log any errors encountered during transformation.'
+      })
+
       .argv,
 
-    input = null;
+    input = null,
+    errLog = null;
 
 if (argv.file !== '') {
   input = fs.createReadStream(argv.file);
@@ -31,6 +38,9 @@ if (argv.file !== '') {
 
 if (!input) return console.log('There was no input recieved');
 
-osm2geojson.output.pipe(process.stdout);
-osm2geojson.error.pipe(process.stderr);
-input.pipe(osm2geojson.input);
+input.pipe(osm2geojson)
+  .on('error', function (err) {
+    errLog = errLog || fs.createWriteStream(argv.errorLog);
+    errLog.write(err);
+  })
+  .pipe(process.stdout);

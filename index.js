@@ -10,15 +10,24 @@ function Osm2GeoJSON(filterFunction, mappingFunction) {
   if (typeof mappingFunction !== 'function') mappingFunction = function (f) { return f; };
 
   // Setup an xml stream parser and a GeoJSON stream writer
-  var parser = this.input = new expat.Parser('UTF-8'),
-      writer = this.output = geojsonStream.stringify(),
-      error = this.error = new stream.PassThrough(),
+  var transformer = new stream.Transform(),
+      parser = new expat.Parser('UTF-8'),
+      writer = geojsonStream.stringify()
+        .on('data', function (chunk) {
+          transformer.push(chunk);
+        })
+        .on('end', transformer.end),
 
       // Setup some cruft
       currentFeature = null,
       nodes = {};
 
-  // Helper function to setup a GeoJSON feature
+  transformer._transform = function (chunk, encoding, callback) {
+    parser.write(chunk);
+    callback();
+  }
+
+  // Helper function to set up a GeoJSON feature
   function newFeature(id, uid, coords) {
     return {
       type: 'Feature',
@@ -45,7 +54,7 @@ function Osm2GeoJSON(filterFunction, mappingFunction) {
       // Lookup the node, assign its coords to the currentFeature
       var node = nodes[attrs.ref];
       if (node) currentFeature.geometry.coordinates.push(node.coordinates);
-      else parser.emit('error', 'Could not find node: ' + attrs.ref + ', referenced by way: ' + currentFeature.id = '\n');
+      else transformer.emit('error', 'Could not find node: ' + attrs.ref + ', referenced by way: ' + currentFeature.id +'\n');
       break;
     case 'tag':
       // Assign properties to the currentFeature, if it exists.
@@ -90,11 +99,8 @@ function Osm2GeoJSON(filterFunction, mappingFunction) {
   
   // When we're all finished with the incoming data
   parser.on('end', writer.end);
-  
-  // When an error is encountered
-  parser.on('error', function (err) { error.write(err.toString()); });
+
+  return transformer;
 }
 
-module.exports = function (filterFunction) {
-  return new Osm2GeoJSON(filterFunction);
-}
+module.exports = Osm2GeoJSON;
