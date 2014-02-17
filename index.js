@@ -92,6 +92,9 @@ function Osm2GeoJSON(filterFunction, mappingFunction) {
     //  ... also run the feature through whatever mapping function we've got
     if (currentFeature && currentFeature.geometry.type !== '') {
       if (filterFunction(currentFeature)) writer.write(mappingFunction(currentFeature));
+      
+      // Get rid of the current feature so nothing additional ends up on the last one
+      currentFeature = null;
     }
 
     // Finished writing when we've parsed the end of the <osm> element
