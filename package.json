@@ -12,7 +12,7 @@
     "url": "https://github.com/rclark/osm2geojson.git"
   },
   "main": "index.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "dependencies": {
     "geojson-stream": "0.0.1",
     "minimist": "^1.2.0",
