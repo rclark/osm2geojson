@@ -1,46 +1,24 @@
 #!/usr/bin/env node
 
-var osm2geojson = require('../')(),
-    fs = require('fs'),
-    request = require('request'),
+var osm2geojson = require('..');
+var geojson = require('geojson-stream');
+var minimist = require('minimist');
 
-    argv = require('optimist')
-      .options('b', {
-        alias: 'bbox', 
-        default: '[]', 
-        describe: 'an array representing a bounding box as [left, bottom, right, top]. Units of degrees. The total area cannot exceed 0.25 sq. degrees.'
-      })
+var args = minimist(process.argv.slice(2));
+var filepath = args._[0];
 
-      .options('f', {
-        alias: 'file',
-        default: '',
-        describe: 'the path to a file containing an OSM dump as XML'
-      })
-
-      .options('e', {
-        alias: 'errorLog',
-        default: 'osm2geojson.err',
-        describe: 'the path to a file that will log any errors encountered during transformation.'
-      })
-
-      .argv,
-
-    input = null,
-    errLog = null;
-
-if (argv.file !== '') {
-  input = fs.createReadStream(argv.file);
-} else if (argv.bbox !== '[]') {
-  var bbox = JSON.parse(argv.bbox);
-  if ((bbox[2] - bbox[0]) * (bbox[3] - bbox[1]) > 0.25) return console.log('Requested area is too large.');
-  input = request('http://api.openstreetmap.org/api/0.6/map?bbox=' + bbox.join(','));
+if (args.h || args.help || !filepath) {
+  console.log('Usage: osm2geojson [options] <filepath>');
+  console.log('');
+  console.log('Options:');
+  console.log('  -w, --warn\tLog warnings to stderr on invalid data');
+  console.log('');
+  process.exit(1);
 }
 
-if (!input) return console.log('There was no input recieved');
-
-input.pipe(osm2geojson)
-  .on('error', function (err) {
-    errLog = errLog || fs.createWriteStream(argv.errorLog);
-    errLog.write(err);
-  })
+osm2geojson(filepath, { failEvents: args.w || args.warn })
+  .on('fail', function(err) { console.error(err.message); })
+  .on('error', function(err) { throw err; })
+  .pipe(geojson.stringify())
+  .on('error', function(err) { throw err; })
   .pipe(process.stdout);
