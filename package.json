@@ -16,7 +16,8 @@
   "dependencies": {
     "geojson-stream": "0.0.1",
     "minimist": "^1.2.0",
-    "osmium": "^0.4.4"
+    "osmium": "^0.4.4",
+    "underscore": "^1.8.3"
   },
   "bin": {
     "osm2geojson": "./bin/osm2geojson.js"

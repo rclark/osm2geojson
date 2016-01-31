@@ -1,4 +1,5 @@
 var osmium = require('osmium');
+var _ = require('underscore');
 var path = require('path');
 var stream = require('stream');
 
@@ -23,6 +24,12 @@ function osm2geojson(filepath, options) {
       properties: osm.tags()
     };
 
+    if (!options.allNodes && osm.type === 'node') {
+      var ignore = ['source', 'created_by'];
+      var keys = Object.keys(feature.properties);
+      if (_.difference(keys, ignore).length === 0) return callback();
+    }
+
     ['type', 'id', 'version', 'changeset', 'timestamp', 'user', 'uid']
       .forEach(function(key) {
         feature.properties['osm:' + key] = key === 'type' ? type : osm[key];
@@ -39,7 +46,7 @@ function osm2geojson(filepath, options) {
         toGeoJSON.emit('fail', err);
         return callback();
       }
-      
+
       return callback(err);
     }
 
