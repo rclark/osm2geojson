@@ -5,18 +5,17 @@
 Streams OSM data in any format to GeoJSON
 
 ### Install it globally
-```sh
+```
 npm install -g osm2geojson
 ```
 
 ### Use it from the command line
-```sh
-osm2geojson --help
-
+```
 Usage: osm2geojson [options] <filepath>
 
 Options:
-  -w, --warn	Log warnings to stderr on invalid data
+  -w, --warn	On invalid data, log warnings to stderr instead of failing
+  -n, --nodes	Create GeoJSON for nodes which are not POIs
 ```
 
 ### Use it in another Node.js module
@@ -46,3 +45,10 @@ osm2geojson.on('fail', function(failure) {
 
 osm2geojson.pipe(aWritableStream);
 ```
+
+### Want every node?
+
+By default, nodes that are not points-of-interest (POIs) will not be included in
+the output. A POI is defined as a node that has tags other than `source` and
+`created_by`. If you wish to include every node, you can use the `--node` flag
+at the command-line, or provide the `allNodes` option in JavaScript.
