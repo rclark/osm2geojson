@@ -23,7 +23,7 @@ Options:
 
 ```js
 var filepath = '/path/to/osm/data';
-var osm2geojson = require("osm2geojson")(filepath);
+var osm2geojson = require('osm2geojson')(filepath);
 osm2geojson.pipe(aWritableStream);
 ```
 
@@ -37,7 +37,7 @@ that you can inspect.
 
 ```js
 var filepath = '/path/to/osm/data';
-var osm2geojson = require("osm2geojson")(filepath, { failEvents: true });
+var osm2geojson = require('osm2geojson')(filepath, { failEvents: true });
 
 osm2geojson.on('fail', function(failure) {
   console.log(failure.message);
