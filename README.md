@@ -11,13 +11,11 @@ npm install -g osm2geojson
 
 ### Use it from the command line
 ```
-osm2geojson --help
-
 Usage: osm2geojson [options] <filepath>
 
 Options:
   -w, --warn	On invalid data, log warnings to stderr instead of failing
-  -n, --nodes Create GeoJSON for nodes which are not POIs
+  -n, --nodes	Create GeoJSON for nodes which are not POIs
 ```
 
 ### Use it in another Node.js module
