@@ -4,7 +4,10 @@ var osm2geojson = require('..');
 var geojson = require('geojson-stream');
 var minimist = require('minimist');
 
-var args = minimist(process.argv.slice(2));
+var args = minimist(process.argv.slice(2), {
+  boolean: ['w', 'warn', 'n', 'nodes']
+});
+
 var filepath = args._[0];
 
 if (args.h || args.help || !filepath) {
