@@ -35,6 +35,8 @@ function osm2geojson(filepath, options) {
         feature.properties['osm:' + key] = key === 'type' ? type : osm[key];
       });
 
+    feature.properties['osm:timestamp'] = osm.timestamp();
+
     try {
       feature.geometry = osm.geojson();
     }
